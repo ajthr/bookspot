@@ -14,23 +14,6 @@ from customers.models import Customer
 totp = pyotp.TOTP(s=settings.SECRET_KEY, interval=120)
 
 
-def login_required(func):
-    @wraps(func)
-    def decorated_func(*args, **kwargs):
-        session_id = request.cookies.get("__USESSID_")
-        if session_id is not None:
-            try:
-                jwt.decode(
-                    session_id, settings.SECRET_KEY, algorithms=["HS256"])
-                return func(*args, **kwargs)
-            except (jwt.exceptions.InvalidTokenError,
-                    jwt.exceptions.InvalidSignatureError,
-                    jwt.exceptions.ExpiredSignatureError):
-                return response("", 401)
-        return response("", 401)
-    return decorated_func
-
-
 def signin(name, email):
     try:
         user = db.Session.query(Customer).filter(
@@ -62,15 +45,17 @@ def signin(name, email):
         return response("", 500)
 
 
-def get_user():
+def get_instance(model):
     try:
         session_id = request.cookies.get("__USESSID_")
-        user_id = jwt.decode(
+        id = jwt.decode(
             session_id, settings.SECRET_KEY, algorithms=["HS256"])["id"]
-        user = db.Session.query(Customer).filter(
-            Customer.id == user_id).first()
-        return user
-    except:
+        instance = db.Session.query(model).filter(
+            model.id == id).first()
+        return instance
+    except (jwt.exceptions.InvalidTokenError,
+            jwt.exceptions.InvalidSignatureError,
+            jwt.exceptions.ExpiredSignatureError):
         return None
 
 

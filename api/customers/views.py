@@ -6,18 +6,19 @@ from google.auth.transport import requests
 
 from config import db, settings
 from config.base import BaseView
-from config.utils import totp, login_required, send_mail, signin, get_user
+from config.permissions import authorized_only
+from config.utils import totp, send_mail, signin, get_instance
 
-from customers.models import Address
+from customers.models import Customer, Address
 from customers.serializers import CustomerSchema, AddressSchema
 
 
 class CustomerApiView(BaseView):
 
-    decorators = [login_required]
+    decorators = [authorized_only]
 
     def get(self):
-        user = get_user()
+        user = get_instance(Customer)
         if user is not None:
             schema = CustomerSchema()
             data = schema.dump(user)
@@ -27,7 +28,7 @@ class CustomerApiView(BaseView):
     def patch(self):
         try:
             name = request.json['name']
-            user = get_user()
+            user = get_instance(Customer)
             if user is not None:
                 user.name = name
                 db.Session.commit()
@@ -82,7 +83,7 @@ class GoogleSigninAPIView(BaseView):
 
 class LogoutAPIView(BaseView):
 
-    decorators = [login_required]
+    decorators = [authorized_only]
 
     def post(self):
         try:
@@ -95,10 +96,10 @@ class LogoutAPIView(BaseView):
 
 class AddressAPIView(BaseView):
 
-    decorators = [login_required]
+    decorators = [authorized_only]
 
     def get(self):
-        user = get_user()
+        user = get_instance(Customer)
         if user is not None:
             addresses = db.Session.query(Address).filter(
                 Address.customer == user.id).all()
@@ -110,7 +111,7 @@ class AddressAPIView(BaseView):
     def post(self):
         schema = AddressSchema()
         try:
-            user = get_user()
+            user = get_instance(Customer)
             if user is not None:
                 schema.load(request.json)
                 address = Address(customer=user.id,
@@ -135,7 +136,7 @@ class AddressAPIView(BaseView):
     def patch(self):
         schema = AddressSchema()
         try:
-            user = get_user()
+            user = get_instance(Customer)
             if user is not None:
                 schema.load(request.json)
                 assert 'id' in request.json
