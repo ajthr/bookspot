@@ -3,6 +3,7 @@ import os
 DEBUG = True
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
+OTP_KEY = os.environ.get('OTP_KEY')
 
 SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 465

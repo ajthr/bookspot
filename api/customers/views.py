@@ -7,9 +7,9 @@ from google.auth.transport import requests
 from config import db, settings
 from config.base import BaseView
 from config.permissions import authorized_only
-from config.utils import totp, send_mail, signin, get_instance
+from config.utils import totp, send_mail, signin, get_user
 
-from customers.models import Customer, Address
+from customers.models import Address
 from customers.serializers import CustomerSchema, AddressSchema
 
 
@@ -18,7 +18,7 @@ class CustomerApiView(BaseView):
     decorators = [authorized_only]
 
     def get(self):
-        user = get_instance(Customer)
+        user = get_user()
         if user is not None:
             schema = CustomerSchema()
             data = schema.dump(user)
@@ -28,7 +28,7 @@ class CustomerApiView(BaseView):
     def patch(self):
         try:
             name = request.json['name']
-            user = get_instance(Customer)
+            user = get_user()
             if user is not None:
                 user.name = name
                 db.Session.commit()
@@ -99,7 +99,7 @@ class AddressAPIView(BaseView):
     decorators = [authorized_only]
 
     def get(self):
-        user = get_instance(Customer)
+        user = get_user()
         if user is not None:
             addresses = db.Session.query(Address).filter(
                 Address.customer == user.id).all()
@@ -111,20 +111,11 @@ class AddressAPIView(BaseView):
     def post(self):
         schema = AddressSchema()
         try:
-            user = get_instance(Customer)
+            user = get_user()
             if user is not None:
-                schema.load(request.json)
-                address = Address(customer=user.id,
-                                  name=request.json["name"],
-                                  address=request.json["address"],
-                                  locality=request.json["locality"],
-                                  city=request.json["city"],
-                                  state=request.json["state"],
-                                  mobile=request.json["mobile"],
-                                  pincode=request.json["pincode"],
-                                  office=request.json["office"],
-                                  default=request.json["default"]
-                                  )
+                data = schema.load(request.json)
+                data['customer'] = user.id
+                address = Address(**data)
                 db.Session.add(address)
                 db.Session.commit()
                 return response("", 200)
@@ -136,16 +127,18 @@ class AddressAPIView(BaseView):
     def patch(self):
         schema = AddressSchema()
         try:
-            user = get_instance(Customer)
+            user = get_user()
             if user is not None:
                 schema.load(request.json)
                 assert 'id' in request.json
-                db.Session.query(Address).filter(
-                    Address.id == request.json["id"]).update(request.json)
-                db.Session.commit()
-                return response("", 200)
+                query = db.Session.query(Address).filter(
+                    Address.id == request.json["id"])
+                if query.first().customer == user.id:
+                    query.update(request.json)
+                    db.Session.commit()
+                    return response("", 200)
             return response("", 200)
         except (ValidationError, AssertionError):
             return response("", 400)
-        except: # catch db exceptions
+        except:  # catch db exceptions
             return response("", 500)

@@ -13,6 +13,7 @@ services:
             sh -c "alembic upgrade head && gunicorn -w 4 -b 0.0.0.0:8000 app:app --reload"
         environment:
             SECRET_KEY: ${SECRET_KEY}
+            OTP_KEY: ${OTP_KEY}
             PSQL_USER: ${PSQL_USER}
             PSQL_PWD: ${PSQL_PWD}
             PSQL_HOST: ${PSQL_HOST}

@@ -10,8 +10,9 @@ from flask import request, make_response as response
 from config import settings, db
 
 from customers.models import Customer
+from staffs.models import Staff
 
-totp = pyotp.TOTP(s=settings.SECRET_KEY, interval=120)
+totp = pyotp.TOTP(s=settings.OTP_KEY, interval=120)
 
 
 def signin(name, email):
@@ -45,13 +46,27 @@ def signin(name, email):
         return response("", 500)
 
 
-def get_instance(model):
+def get_user():
     try:
         session_id = request.cookies.get("__USESSID_")
         id = jwt.decode(
             session_id, settings.SECRET_KEY, algorithms=["HS256"])["id"]
-        instance = db.Session.query(model).filter(
-            model.id == id).first()
+        instance = db.Session.query(Customer).filter(
+            Customer.id == id).first()
+        return instance
+    except (jwt.exceptions.InvalidTokenError,
+            jwt.exceptions.InvalidSignatureError,
+            jwt.exceptions.ExpiredSignatureError):
+        return None
+
+
+def get_staff():
+    try:
+        session_id = request.cookies.get("__STSSID_")
+        username = jwt.decode(
+            session_id, settings.SECRET_KEY, algorithms=["HS256"])["username"]
+        instance = db.Session.query(Staff).filter(
+            Staff.username == username).first()
         return instance
     except (jwt.exceptions.InvalidTokenError,
             jwt.exceptions.InvalidSignatureError,

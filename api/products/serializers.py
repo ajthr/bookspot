@@ -9,5 +9,5 @@ class ProductSchema(Schema):
     msrp = fields.Integer(required=True)
     price = fields.Integer(required=True)
     genre = fields.String(required=True)
-    published = fields.Date(required=True)
+    published = fields.Date()
     created = fields.Date()
