@@ -20,6 +20,7 @@ class Product(db.Base):
     genre = Column(String, nullable=False)
     popularity = Column(Integer, default=0)
     published = Column(Date, default=datetime.date.today())
+    copies = Column(Integer, nullable=False)
     created = Column(Date, default=datetime.date.today())
 
     def __repr__(self):

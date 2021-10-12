@@ -10,4 +10,5 @@ class ProductSchema(Schema):
     price = fields.Integer(required=True)
     genre = fields.String(required=True)
     published = fields.Date()
+    copies = fields.Integer(required=True)
     created = fields.Date()

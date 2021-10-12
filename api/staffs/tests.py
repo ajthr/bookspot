@@ -405,7 +405,8 @@ class StaffTests:
             "publisher": "publisher_test",
             "msrp": 100,
             "price": 90,
-            "genre": "genre_test",
+            "copies": 10,
+            "genre": "genre_test"
         })
         assert resp.status_code == 200
 
@@ -418,6 +419,7 @@ class StaffTests:
         assert b'"publisher":"publisher_test"' in resp.data
         assert b'"msrp":100' in resp.data
         assert b'"price":90' in resp.data
+        assert b'"copies":10' in resp.data
         assert b'"genre":"genre_test"' in resp.data
 
         # test patch without request body
@@ -444,6 +446,7 @@ class StaffTests:
             "publisher": "publisher_test",
             "msrp": 150,
             "price": 120,
+            "copies": 10,
             "genre": "genre_test",
         })
         assert resp.status_code == 404
@@ -456,6 +459,7 @@ class StaffTests:
             "publisher": "publisher_test",
             "msrp": 150,
             "price": 120,
+            "copies": 10,
             "genre": "genre_test",
         })
         assert resp.status_code == 200
@@ -470,6 +474,7 @@ class StaffTests:
         assert b'"publisher":"publisher_test"' in resp.data
         assert b'"msrp":150' in resp.data
         assert b'"price":120' in resp.data
+        assert b'"copies":10' in resp.data
         assert b'"genre":"genre_test"' in resp.data
 
         # test delete non existing product

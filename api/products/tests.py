@@ -17,6 +17,7 @@ class ProductTests:
             publisher="test_single",
             msrp=1340,
             price=1199,
+            copies=10,
             genre="test_single"
         )
         db.Session.add(product)
@@ -31,6 +32,7 @@ class ProductTests:
                 publisher="test",
                 msrp=1340,
                 price=1199,
+                copies=10,
                 genre="test"
             ),
             Product(
@@ -40,6 +42,7 @@ class ProductTests:
                 publisher="test_1",
                 msrp=1240,
                 price=1099,
+                copies=10,
                 genre="test_1"
             )
         ]
@@ -57,6 +60,7 @@ class ProductTests:
                 publisher="test",
                 msrp=1340,
                 price=1199,
+                copies=10,
                 genre="test"
             ),
             Product(
@@ -66,6 +70,7 @@ class ProductTests:
                 publisher="test_1",
                 msrp=1240,
                 price=1099,
+                copies=10,
                 genre="test_1"
             )
         ]
@@ -102,6 +107,7 @@ class ProductTests:
             publisher="test",
             msrp=1340,
             price=1199,
+            copies=10,
             genre="test"
         )
         db.Session.add(product)
