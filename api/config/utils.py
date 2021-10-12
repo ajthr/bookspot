@@ -49,11 +49,13 @@ def signin(name, email):
 def get_user():
     try:
         session_id = request.cookies.get("__USESSID_")
-        id = jwt.decode(
-            session_id, settings.SECRET_KEY, algorithms=["HS256"])["id"]
-        instance = db.Session.query(Customer).filter(
-            Customer.id == id).first()
-        return instance
+        if session_id is not None:
+            id = jwt.decode(
+                session_id, settings.SECRET_KEY, algorithms=["HS256"])["id"]
+            instance = db.Session.query(Customer).filter(
+                Customer.id == id).first()
+            return instance
+        return None
     except (jwt.exceptions.InvalidTokenError,
             jwt.exceptions.InvalidSignatureError,
             jwt.exceptions.ExpiredSignatureError):
@@ -63,11 +65,13 @@ def get_user():
 def get_staff():
     try:
         session_id = request.cookies.get("__STSSID_")
-        username = jwt.decode(
-            session_id, settings.SECRET_KEY, algorithms=["HS256"])["username"]
-        instance = db.Session.query(Staff).filter(
-            Staff.username == username).first()
-        return instance
+        if session_id is not None:
+            username = jwt.decode(
+                session_id, settings.SECRET_KEY, algorithms=["HS256"])["username"]
+            instance = db.Session.query(Staff).filter(
+                Staff.username == username).first()
+            return instance
+        return None
     except (jwt.exceptions.InvalidTokenError,
             jwt.exceptions.InvalidSignatureError,
             jwt.exceptions.ExpiredSignatureError):

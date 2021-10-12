@@ -17,10 +17,14 @@ def register_urls(app):
                      view_func=GoogleSigninAPIView.as_view('google_signin'))
     app.add_url_rule('/me/',
                      view_func=CustomerApiView.as_view('profile'))
-    app.add_url_rule('/me/address/',
-                     view_func=AddressAPIView.as_view('address'))
     app.add_url_rule('/logout/',
                      view_func=LogoutAPIView.as_view('logout'))
+
+    user_address_view = AddressAPIView.as_view('user_address')
+    app.add_url_rule('/me/address/',
+                     view_func=user_address_view, methods=["GET", "POST"])
+    app.add_url_rule('/me/address/<int:id>/',
+                     view_func=user_address_view, methods=["PATCH", "DELETE"])
 
     from products.views import (
         ProductsAPIView,
@@ -31,3 +35,32 @@ def register_urls(app):
                      view_func=ProductsAPIView.as_view('products'))
     app.add_url_rule('/books/<int:id>/',
                      view_func=ProductAPIView.as_view('product'))
+
+    from staffs.views import (
+        StaffAPIView,
+        CreateStaffAPIView,
+        StaffLoginAPIView,
+        StaffLogoutAPIView,
+        StaffChangePasswordAPIView,
+        StaffResetPasswordAPIView,
+        ManageProductsAPIView
+    )
+
+    app.add_url_rule('/staff/',
+                     view_func=StaffAPIView.as_view('staff'))
+    app.add_url_rule('/staff/create/',
+                     view_func=CreateStaffAPIView.as_view('create_staff'))
+    app.add_url_rule('/staff/login/',
+                     view_func=StaffLoginAPIView.as_view('login_staff'))
+    app.add_url_rule('/staff/logout/',
+                     view_func=StaffLogoutAPIView.as_view('logout_staff'))
+    app.add_url_rule('/staff/change_password/',
+                     view_func=StaffChangePasswordAPIView.as_view('change_password_staff'))
+    app.add_url_rule('/staff/reset_password/',
+                     view_func=StaffResetPasswordAPIView.as_view('reset_password_staff'))
+
+    manage_products_view = ManageProductsAPIView.as_view('manage_products')
+    app.add_url_rule('/staff/products/',
+                     view_func=manage_products_view, methods=["POST"])
+    app.add_url_rule('/staff/products/<int:id>/',
+                     view_func=manage_products_view, methods=["PATCH", "DELETE"])
