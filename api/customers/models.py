@@ -1,8 +1,10 @@
 import datetime
 
 from sqlalchemy import Column, Integer, Boolean, String, Date, ForeignKey
+from sqlalchemy.schema import Sequence
 
 from config import db
+
 
 class Customer(db.Base):
     __tablename__ = 'customer'
@@ -15,10 +17,12 @@ class Customer(db.Base):
     def __repr__(self):
         return "<Customer (id=%s, email=%s)>" % (self.id, self.email)
 
+
 class Address(db.Base):
     __tablename__ = 'address'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Sequence('address_id', start=10000,
+                increment=1), primary_key=True, unique=True)
     customer = Column(String, ForeignKey('customer.id', ondelete="CASCADE"))
     name = Column(String, nullable=False)
     address = Column(String, nullable=False)

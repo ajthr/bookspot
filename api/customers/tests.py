@@ -183,8 +183,12 @@ class CustomerTests:
         resp = client.post('/me/address/')
         assert resp.status_code == 401
 
-        # test get address without authorization
-        resp = client.patch('/me/address/')
+        # test patch address without authorization
+        resp = client.patch('/me/address/10000/')
+        assert resp.status_code == 401
+
+        # test patch address without authorization
+        resp = client.delete('/me/address/10000/')
         assert resp.status_code == 401
 
         # test get address
@@ -230,7 +234,7 @@ class CustomerTests:
         assert resp.status_code == 200
 
         # test returned data is correct
-        assert b'"id"' in resp.data
+        assert b'"id":10000' in resp.data
         assert b'"name":"name"' in resp.data
         assert b'"address":"address"' in resp.data
         assert b'"locality":"locality"' in resp.data
@@ -242,25 +246,10 @@ class CustomerTests:
         assert b'"default":false' in resp.data
 
         # test update address without request body
-        resp = client.patch('/me/address/')
+        resp = client.patch('/me/address/10000/')
         assert resp.status_code == 400
 
-        # test update address without correct request body
-        # without id alone
-        resp = client.patch('/me/address/', json={
-            'name': "name",
-            'address': "address",
-            'locality': "locality",
-            'city': "city",
-            'state': "state",
-            'mobile': "mobile",
-            'pincode': "pincode",
-            'office': False,
-            'default': False
-        })
-        assert resp.status_code == 400
-
-        resp = client.patch('/me/address/', json={
+        resp = client.patch('/me/address/10000/', json={
             'name': "name",
             'address': "address",
             'office': False,
@@ -269,8 +258,7 @@ class CustomerTests:
         assert resp.status_code == 400
 
         # test update address
-        resp = client.patch('/me/address/', json={
-            'id': 1,
+        resp = client.patch('/me/address/10000/', json={
             'name': "name_new",
             'address': "address_new",
             'locality': "locality_new",
@@ -288,7 +276,7 @@ class CustomerTests:
         assert resp.status_code == 200
 
         # test returned data is correct
-        assert b'"id"' in resp.data
+        assert b'"id":10000' in resp.data
         assert b'"name":"name_new"' in resp.data
         assert b'"address":"address_new"' in resp.data
         assert b'"locality":"locality_new"' in resp.data
@@ -298,3 +286,21 @@ class CustomerTests:
         assert b'"pincode":"pincode_new"' in resp.data
         assert b'"office":true' in resp.data
         assert b'"default":true' in resp.data
+
+        # test delete address
+        resp = client.delete('/me/address/10000/')
+        assert resp.status_code == 200
+
+
+        resp = client.patch('/me/address/10000/', json={
+            'name': "name_new",
+            'address': "address_new",
+            'locality': "locality_new",
+            'city': "city_new",
+            'state': "state_new",
+            'mobile': "mobile_new",
+            'pincode': "pincode_new",
+            'office': True,
+            'default': True
+        })
+        assert resp.status_code == 404
