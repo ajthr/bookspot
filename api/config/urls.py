@@ -64,3 +64,10 @@ def register_urls(app):
                      view_func=manage_products_view, methods=["POST"])
     app.add_url_rule('/staff/products/<int:id>/',
                      view_func=manage_products_view, methods=["PATCH", "DELETE"])
+
+    from cart.views import  (
+        CartItemAPIView
+    )
+
+    app.add_url_rule('/cart/',
+                     view_func=CartItemAPIView.as_view('cart'))
