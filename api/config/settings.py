@@ -30,5 +30,8 @@ TEST_DATABASE_URI = "postgresql://{}:{}@{}/tests".format(DATABASE["USER"],
                                                                   DATABASE["HOST"],
                                                                   DATABASE["DB"])
 
+STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY')
+STRIPE_ENDPOINT_SECRET = os.environ.get('STRIPE_ENDPOINT_SECRET')
+
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
 GOOGLE_TEST_TOKEN = os.environ.get('GOOGLE_TEST_TOKEN')

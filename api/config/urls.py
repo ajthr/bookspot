@@ -65,9 +65,28 @@ def register_urls(app):
     app.add_url_rule('/staff/products/<int:id>/',
                      view_func=manage_products_view, methods=["PATCH", "DELETE"])
 
-    from cart.views import  (
+    from cart.views import (
         CartItemAPIView
     )
 
     app.add_url_rule('/cart/',
                      view_func=CartItemAPIView.as_view('cart'))
+
+    from orders.views import (
+        OrderAPIView,
+        OrdersAPIView,
+        CreateOrderAPIView,
+        ConfirmPaymentAPIView,
+        CancelOrderAPIView
+    )
+
+    app.add_url_rule('/orders/',
+                     view_func=OrdersAPIView.as_view('orders'))
+    app.add_url_rule('/orders/<int:id>/',
+                     view_func=OrderAPIView.as_view('order'))
+    app.add_url_rule('/create_order/',
+                     view_func=CreateOrderAPIView.as_view('create_order'))
+    app.add_url_rule('/confirm_payment/',
+                     view_func=ConfirmPaymentAPIView.as_view('confirm_payment'))
+    app.add_url_rule('/cancel_order/',
+                     view_func=CancelOrderAPIView.as_view('cancel_order'))

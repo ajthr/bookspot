@@ -20,6 +20,8 @@ services:
             PSQL_DATABASE: ${PSQL_DATABASE}
             EMAIL: ${EMAIL}
             EMAIL_PWD: ${EMAIL_PWD}
+            STRIPE_API_KEY: ${STRIPE_API_KEY}
+            STRIPE_ENDPOINT_SECRET: ${STRIPE_ENDPOINT_SECRET}
             GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
             GOOGLE_TEST_TOKEN: ${GOOGLE_TEST_TOKEN}
     proxy:
