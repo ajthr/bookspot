@@ -1,4 +1,3 @@
-from itertools import product
 from flask import request, make_response as response, jsonify
 from marshmallow import ValidationError
 
